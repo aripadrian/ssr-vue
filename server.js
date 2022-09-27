@@ -1,27 +1,29 @@
 // @ts-check
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import dotenv from 'dotenv'
+import {
+  fileURLToPath
+} from 'node:url'
 import express from 'express'
 
 const isTest = process.env.NODE_ENV === 'test' || !!process.env.VITE_TEST_BUILD
-
+dotenv.config()
 export async function createServer(
   root = process.cwd(),
   isProd = process.env.NODE_ENV === 'production',
   hmrPort
 ) {
-  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const __dirname = path.dirname(fileURLToPath(
+    import.meta.url))
   const resolve = (p) => path.resolve(__dirname, p)
 
-  const indexProd = isProd
-    ? fs.readFileSync(resolve('dist/client/index.html'), 'utf-8')
-    : ''
+  const indexProd = isProd ?
+    fs.readFileSync(resolve('dist/client/index.html'), 'utf-8') :
+    ''
 
-  const manifest = isProd
-    ? // @ts-ignore
-      (await import('./dist/client/ssr-manifest.json')).default
-    : {}
+  const manifest = isProd ? // @ts-ignore
+    (await import('./dist/client/ssr-manifest.json')).default : {}
 
   const app = express()
 
@@ -84,7 +86,9 @@ export async function createServer(
         .replace(`<!--preload-links-->`, preloadLinks)
         .replace(`<!--app-html-->`, appHtml)
 
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(html)
+      res.status(200).set({
+        'Content-Type': 'text/html'
+      }).end(html)
     } catch (e) {
       vite && vite.ssrFixStacktrace(e)
       console.log(e.stack)
@@ -92,13 +96,18 @@ export async function createServer(
     }
   })
 
-  return { app, vite }
+  return {
+    app,
+    vite
+  }
 }
 
 if (!isTest) {
-  createServer().then(({ app }) =>
-    app.listen(6173, () => {
-      console.log('http://localhost:6173')
+  createServer().then(({
+      app
+    }) =>
+    app.listen(process.env.PORT, () => {
+      console.log(`http://localhost:${process.env.PORT}`)
     })
   )
 }
