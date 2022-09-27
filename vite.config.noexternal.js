@@ -8,8 +8,7 @@ export default Object.assign(config, {
   },
   resolve: {
     // necessary because vue.ssrUtils is only exported on cjs modules
-    alias: [
-      {
+    alias: [{
         find: '@vue/runtime-dom',
         replacement: '@vue/runtime-dom/dist/runtime-dom.cjs.js'
       },
@@ -20,6 +19,6 @@ export default Object.assign(config, {
     ]
   },
   optimizeDeps: {
-    exclude: ['example-external-component']
+    // exclude: ['example-external-component']
   }
 })
